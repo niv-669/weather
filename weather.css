@@ -193,7 +193,7 @@ body{
     display: none;
 }
 
-@media screen and (max-width: 360px) {
+@media screen and (max-width: 425px) {
     .container {
         width: 88vw;
         max-height: 150vw;
@@ -234,7 +234,7 @@ body{
     .weather-details .wind {
         width: 100%;
         margin-right: 0;
-        padding: 10px 0;
+        padding: 10px 10px;
         font-size: 3.5vw;
         justify-content: flex-start;
     }
