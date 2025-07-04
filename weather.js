@@ -47,31 +47,31 @@ search.addEventListener('click', () => {
 
             switch (json.weather[0].main){
                 case 'Clear':
-                    image.src = 'imagis/clear.png';
+                    image.src = 'images/clear.png';
                 break;
     
                 case 'Rain':
-                    image.src = 'imagis/rain.png';
+                    image.src = 'images/rain.png';
                 break;
     
                 case 'Snow':
-                    image.src = 'imagis/snow.png';
+                    image.src = 'images/snow.png';
                 break;
     
                 case 'Clouds':
-                    image.src = 'imagis/cloud.png';
+                    image.src = 'images/cloud.png';
                 break;
     
                 case 'Mist':
-                    image.src = 'imagis/mist.png';
+                    image.src = 'images/mist.png';
                 break;
 
                 case 'Haze':
-                    image.src = 'imagis/mist.png';
+                    image.src = 'images/mist.png';
                 break;
     
                 default:
-                    image.src = 'imagis/cloud.png';
+                    image.src = 'images/cloud.png';
             }
     
             temperature.innerHTML = `${parseInt(json.main.temp)}<span>°C</span>`;
@@ -79,56 +79,70 @@ search.addEventListener('click', () => {
             humidity.innerHTML = `${json.main.humidity}%`;
             wind.innerHTML = `${parseInt(json.wind.speed)}km/h`;
 
-        //     const infoWeather = document.querySelector('.info-weather');
-        //     const infoHumidity = document.querySelector('.info-humidity');
-        //     const infoWind = document.querySelector('.info-wind');
+            // Update forecast for the searched city
+            getForecast(city);
 
-        //     const elCloneInfoWeather = infoWeather.cloneNode(true);
-        //     const elCloneInfoHumidity = infoHumidity.cloneNode(true);
-        //     const elCloneInfoWind = infoWind.cloneNode(true);
-
-        //     elCloneInfoWeather.id = 'clone-info-weather';
-        //     elCloneInfoWeather.classList.add('active-clone');
-
-        //     elCloneInfoHumidity.id = 'clone-info-humidity';
-        //     elCloneInfoHumidity.classList.add('active-clone');
-
-        //     elCloneInfoWind.id = 'clone-info-wind';
-        //     elCloneInfoWind.classList.add('active-clone');
-
-        //     setTimeout(() =>{
-        //         infoWeather.insertAdjacentElement("afterend", elCloneInfoWeather);
-        //         infoHumidity.insertAdjacentElement("afterend", elCloneInfoHumidity);
-        //         infoWind.insertAdjacentElement("afterend", elCloneInfoWind);
-        //     }, 2200);
-
-        //     const CloneInfoWeather = document.querySelectorAll('.info-weather.active-clone');
-        //     // if(CloneInfoWeather.length>0){
-        //     //     CloneInfoWeather[0].remove();
-        //     // }
-        //     const totalCloneInfoWeather = CloneInfoWeather.length;
-        //     const CloneInfoWeatherFirst = CloneInfoWeather[0];
-
-        //     const CloneInfoHumidity = document.querySelectorAll('.info-humidity.active-clone');
-        //     const CloneInfoHumidityFirst = CloneInfoHumidity[0];
-
-        //     const CloneInfoWind = document.querySelectorAll('.info-wind.active-clone');
-        //     const CloneInfoWindFirst = CloneInfoWind[0];
-
-        //     if(totalCloneInfoWeather >0){
-        //         CloneInfoWeatherFirst.classList.remove('active-clone');
-        //         CloneInfoHumidityFirst.classList.remove('active-clone');
-        //         CloneInfoWindFirst.classList.remove('active-clone');
-            
-
-        //     setTimeout(() => {
-        //         CloneInfoWeatherFirst.remove();
-        //         CloneInfoHumidityFirst.remove();
-        //         CloneInfoWindFirst.remove();
-        //     }, 2200);
-        // }
     }  
 
     });
     
+});
+
+
+function getForecast(city) {
+  const apiKey = "ce8e046959951e7aa53a05b6497c8f06";
+  const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      const forecastContainer = document.getElementById("forecast-container");
+      forecastContainer.innerHTML = "";
+
+      const dailyData = {};
+      data.list.forEach(entry => {
+        const date = entry.dt_txt.split(" ")[0];
+        if (!dailyData[date]) {
+          dailyData[date] = entry;
+        }
+      });
+
+      const days = Object.keys(dailyData).slice(0, 5);
+      days.forEach(date => {
+        const entry = dailyData[date];
+        const condition = entry.weather[0].main;
+        const iconMap = {
+          Clear: 'clear.png',
+          Clouds: 'cloud.png',
+          Rain: 'rain.png',
+          Drizzle: 'rain.png',
+          Thunderstorm: 'rain.png',
+          Snow: 'snow.png',
+          Mist: 'mist.png',
+          Smoke: 'mist.png',
+          Haze: 'mist.png',
+          Fog: 'mist.png'
+        };
+        const icon = iconMap[condition] || 'cloud.png';
+        const card = document.createElement("div");
+        card.className = "forecast-card";
+card.innerHTML = `
+  <h4>${date}</h4>
+  <img src="images/${icon}" alt="${condition}" width="48" height="48">
+  <p>${condition}</p>
+  <p>🌡️ ${entry.main.temp}°C</p>
+  <p>💨 ${entry.wind.speed} km/h</p>
+`;
+forecastContainer.appendChild(card);
+      });
+    })  
+    .catch(err => {
+      console.error("Forecast error:", err);
+    });
+}
+
+// Call forecast for default city shown
+document.addEventListener("DOMContentLoaded", () => {
+  const cityName = document.querySelector(".city")?.textContent || "";
+  getForecast(cityName);
 });
