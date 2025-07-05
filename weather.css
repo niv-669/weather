@@ -207,7 +207,7 @@ body{
     .search-box i,
     .search-box button {
         font-size: 18px;
-        padding: 0 10px 0 5px;
+        padding: 0 10px 0 2px;
     }
     .weather-box img {
         width: 70%;
@@ -281,7 +281,7 @@ body{
 }
 
 #forecast-section {
-    margin-top: 14vw;
+    margin-top: 20vw;
     text-align: center;
     color: #fff;
 }
@@ -319,11 +319,34 @@ body{
     height: 17vw;
 }
 @media(max-width: 425px){
+
     #forecast-container{
         flex-direction:column;
         align-items:center;
     }
     .forecast-card{
         width:90%;
+    }
+}
+@media (max-width: 375px) {
+    .search-box input {
+        margin-bottom: 1vw;
+    }
+    
+    #forecast-section {
+        margin-top: 22vw;
+    }
+    .weather-details .humidity,
+    .weather-details .wind {
+        margin-left: 1.5vw;
+        font-size: 3.8vw;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+@media (max-width: 360px){
+    #forecast-section {
+        margin-top: 25vw;
     }
 }
